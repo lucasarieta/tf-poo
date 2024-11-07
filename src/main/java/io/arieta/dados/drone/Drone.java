@@ -6,6 +6,7 @@ public abstract class Drone {
     private double autonomia;
 
     public Drone(int codigo, double custoFixo, double autonomia) {
+        
     }
 
     public double calculaCustoKm() {
