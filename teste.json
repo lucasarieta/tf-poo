@@ -1,16 +1,19 @@
 {
   "drones" : [ {
+    "type" : "CARGA_INANIMADA",
     "codigo" : 22,
     "custoFixo" : 20.0,
     "autonomia" : 200.0,
     "pesoMaximo" : 200.0,
     "protecao" : true
   }, {
+    "type" : "PESSOAL",
     "codigo" : 11,
     "custoFixo" : 10.0,
     "autonomia" : 100.0,
     "qtdMaxPessoas" : 5
   }, {
+    "type" : "CARGA_VIVA",
     "codigo" : 33,
     "custoFixo" : 30.0,
     "autonomia" : 400.0,
@@ -18,6 +21,7 @@
     "climatizado" : true
   } ],
   "transportes" : [ {
+    "type" : "CARGA_VIVA",
     "numero" : 222,
     "nomeCliente" : "Joana Santos",
     "descricao" : "Pandas",
@@ -30,6 +34,7 @@
     "temperaturaMinima" : 20.1,
     "temperaturaMaxima" : 30.9
   }, {
+    "type" : "PESSOAL",
     "numero" : 111,
     "nomeCliente" : "Maria da Silva",
     "descricao" : "Trabalho",
@@ -41,6 +46,7 @@
     "situacao" : "PENDENTE",
     "qtdPessoas" : 2
   }, {
+    "type" : "CARGA_INANIMADA",
     "numero" : 333,
     "nomeCliente" : "Mario da Silva",
     "descricao" : "Chocolate",
@@ -53,6 +59,7 @@
     "cargaPerigosa" : true
   } ],
   "todosTransportes" : [ {
+    "type" : "CARGA_VIVA",
     "numero" : 222,
     "nomeCliente" : "Joana Santos",
     "descricao" : "Pandas",
@@ -65,6 +72,7 @@
     "temperaturaMinima" : 20.1,
     "temperaturaMaxima" : 30.9
   }, {
+    "type" : "PESSOAL",
     "numero" : 111,
     "nomeCliente" : "Maria da Silva",
     "descricao" : "Trabalho",
@@ -76,6 +84,7 @@
     "situacao" : "PENDENTE",
     "qtdPessoas" : 2
   }, {
+    "type" : "CARGA_INANIMADA",
     "numero" : 333,
     "nomeCliente" : "Mario da Silva",
     "descricao" : "Chocolate",

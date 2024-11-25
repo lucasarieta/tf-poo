@@ -1,12 +1,12 @@
 package io.arieta.dados.drone;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME, // Usa o nome da classe para diferenciar as subclasses
-        include = JsonTypeInfo.As.PROPERTY, // Adiciona uma propriedade adicional para identificar o tipo
-        property = "type" // Nome da propriedade que será usada como discriminador
+        use = JsonTypeInfo.Id.NAME, // Usa o nome do tipo para diferenciar as subclasses
+        include = JsonTypeInfo.As.PROPERTY, // Adiciona uma propriedade extra "type"
+        property = "type" // Nome da propriedade usada como discriminador
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DronePessoal.class, name = "PESSOAL"),
