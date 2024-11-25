@@ -148,7 +148,7 @@ public class ACMEAirDrones {
                     } catch (NumberFormatException e) {
                         saida.append("Erro: Tipo inválido na linha: ").append(linha).append("\n");
                     } catch (Exception e) {
-                        saida.append("Erro ao cadastrar drone: ").append(e.getMessage()).append("\n");
+                        saida.append("Erro ao cadastrar transporte: ").append(e.getMessage()).append("\n");
                     }
                 }
             }
@@ -236,4 +236,90 @@ public class ACMEAirDrones {
         Transporte t = new TransporteCargaViva(numero, nomeCliente, descricao, peso, latOrigem, longOrigem, latDestino, longDestino, temperaturaMinima, temperaturaMaxima);
         transportes.add(t);
     }
+
+    public void processarTransportesPendentes() {
+        if (transportes.isEmpty()) {
+            System.out.println("Erro: Não há transportes pendentes.");
+            return;
+        }
+    
+        Queue<Transporte> filaRestante = new LinkedList<>();
+    
+        while (!transportes.isEmpty()) {
+            Transporte transporte = transportes.poll();
+            Optional<Drone> droneDisponivel = encontrarDroneDisponivel(transporte);
+    
+            if (droneDisponivel.isPresent()) {
+                Drone drone = droneDisponivel.get();
+                try{
+                transporte.setSituacao(TransporteStatus.ALOCADO);
+                }catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+                System.out.println("Transporte " + transporte.getNumero() + " alocado ao drone " + drone.getCodigo());
+
+            } else {
+                System.out.println("Transporte " + transporte.getNumero() + " não pode ser alocado e retornará à fila.");
+                filaRestante.add(transporte);
+            }
+        }
+    
+        
+        transportes.addAll(filaRestante);
+    }
+    
+
+    private Optional<Drone> encontrarDroneDisponivel(Transporte transporte) {
+        for (Drone drone : drones) {
+            if (isDroneCompativel(drone, transporte)) {
+                return Optional.of(drone);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private boolean isDroneCompativel(Drone drone, Transporte transporte) {
+        double distancia = calcularDistancia(
+            transporte.getLatitudeOrigem(),
+            transporte.getLongitudeOrigem(),
+            transporte.getLatitudeDestino(),
+            transporte.getLongitudeDestino()
+        );
+    
+        if (drone.getAutonomia() < distancia) {
+            return false;
+        }
+
+        switch (drone) {
+            case DronePessoal dronePessoal when transporte instanceof TransportePessoal transportePessoal -> {
+                return dronePessoal.getQtdMaxPessoas() >= transportePessoal.getQtdPessoas();
+            }
+            case DroneCargaInanimada droneCarga when transporte instanceof TransporteCargaInanimada -> {
+                TransporteCargaInanimada transporteCarga = (TransporteCargaInanimada) transporte;
+                return droneCarga.getPesoMaximo() >= transporteCarga.getPeso();
+            }
+            case DroneCargaViva droneVivo when transporte instanceof TransporteCargaViva transporteVivo -> {
+                return droneVivo.getPesoMaximo() >= transporteVivo.getPeso();
+            }
+            default -> {
+            }
+        }
+
+
+        return false;
+    }
+
+    private double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+
+
 }

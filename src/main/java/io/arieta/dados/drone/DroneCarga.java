@@ -1,7 +1,7 @@
 package io.arieta.dados.drone;
 
 public class DroneCarga extends Drone {
-    private double pesoMaximo;
+    double pesoMaximo;
 
     public DroneCarga(
         int codigo,
@@ -11,5 +11,9 @@ public class DroneCarga extends Drone {
     ) {
         super(codigo, custoFixo, autonomia);
         this.pesoMaximo = pesoMaximo;
+    }
+
+    public double getPesoMaximo() {
+        return pesoMaximo;
     }
 }

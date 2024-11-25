@@ -18,4 +18,12 @@ public class TransporteCargaViva extends Transporte {
         this.temperaturaMinima = temperaturaMinima;
         this.temperaturaMaxima = temperaturaMaxima;
     }
+
+    public double getTemperaturaMinima() {
+        return temperaturaMinima;
+    }
+
+    public double getTemperaturaMaxima() {
+        return temperaturaMaxima;
+    }
 }

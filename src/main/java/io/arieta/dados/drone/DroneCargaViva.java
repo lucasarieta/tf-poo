@@ -3,6 +3,7 @@ package io.arieta.dados.drone;
 public class DroneCargaViva extends DroneCarga {
     private boolean climatizado;
 
+
     public DroneCargaViva(
         int codigo,
         double custoFixo,
@@ -13,4 +14,5 @@ public class DroneCargaViva extends DroneCarga {
         super(codigo, custoFixo, autonomia, pesoMaximo);
         this.climatizado = climatizado;
     }
+
 }
