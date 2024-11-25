@@ -79,31 +79,144 @@ public class MainFrame extends JFrame {
 
     }
 
-    private void cadastrarDrones() {
-        JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            try {
-                system.cadastrarDrones(selectedFile);
-                outputArea.setText("Drones cadastrados com sucesso!");
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Erro ao cadastrar drones: " + e.getMessage());
+    public void cadastrarDrones() {
+        String[] opcoes = {"Preencher Manualmente", "Enviar Arquivo"};
+        String escolha = (String) JOptionPane.showInputDialog(
+                null,
+                "Como deseja cadastrar o(s) drone(s)?",
+                "Cadastrar Drone",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opcoes,
+                opcoes[0]
+        );
+
+        if (escolha == null) return; // Cancelado
+
+        if (escolha.equals("Preencher Manualmente")) {
+            cadastrarDroneInterativo();
+        } else if (escolha.equals("Enviar Arquivo")) {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showOpenDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File arquivo = fileChooser.getSelectedFile();
+                try {
+                    system.cadastrarDrones(arquivo);
+                    JOptionPane.showMessageDialog(null, "Drones cadastrados com sucesso a partir do arquivo!");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Erro ao processar arquivo: " + e.getMessage());
+                }
             }
         }
     }
 
-    private void cadastrarTransportes() {
-        JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            try {
-                system.cadastrarTransportes(selectedFile);
-                outputArea.setText("Transportes cadastrados com sucesso!");
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Erro ao cadastrar transportes: " + e.getMessage());
+    public void cadastrarTransportes() {
+        String[] opcoes = {"Preencher Manualmente", "Enviar Arquivo"};
+        String escolha = (String) JOptionPane.showInputDialog(
+                null,
+                "Como deseja cadastrar o(s) transporte(s)?",
+                "Cadastrar Transporte",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opcoes,
+                opcoes[0]
+        );
+
+        if (escolha == null) return; // Cancelado
+
+        if (escolha.equals("Preencher Manualmente")) {
+            cadastrarTransporteInterativo();
+        } else if (escolha.equals("Enviar Arquivo")) {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showOpenDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File arquivo = fileChooser.getSelectedFile();
+                try {
+                    system.cadastrarTransportes(arquivo);
+                    JOptionPane.showMessageDialog(null, "Transportes cadastrados com sucesso a partir do arquivo!");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Erro ao processar arquivo: " + e.getMessage());
+                }
             }
+        }
+    }
+
+
+    public void cadastrarDroneInterativo() {
+        String[] opcoes = {"Pessoal", "Carga Inanimada", "Carga Viva"};
+        String tipo = (String) JOptionPane.showInputDialog(null, "Selecione o tipo de drone:",
+                "Cadastrar Drone", JOptionPane.QUESTION_MESSAGE, null, opcoes, opcoes[0]);
+
+        if (tipo == null) return; // Cancelado
+
+        try {
+            int codigo = Integer.parseInt(JOptionPane.showInputDialog("Digite o código do drone:"));
+            double custoFixo = Double.parseDouble(JOptionPane.showInputDialog("Digite o custo fixo:"));
+            double autonomia = Double.parseDouble(JOptionPane.showInputDialog("Digite a autonomia:"));
+
+            switch (tipo) {
+                case "Pessoal" -> {
+                    int qtdMaxPessoas = Integer.parseInt(JOptionPane.showInputDialog("Digite a capacidade máxima de pessoas:"));
+                    system.getDrones().add(new DronePessoal(codigo, custoFixo, autonomia, qtdMaxPessoas));
+                }
+                case "Carga Inanimada" -> {
+                    double pesoMaximo = Double.parseDouble(JOptionPane.showInputDialog("Digite o peso máximo:"));
+                    boolean protecao = JOptionPane.showConfirmDialog(null, "Possui proteção?",
+                            "Proteção", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                    system.getDrones().add(new DroneCargaInanimada(codigo, custoFixo, autonomia, pesoMaximo, protecao));
+                }
+                case "Carga Viva" -> {
+                    double pesoMaximo = Double.parseDouble(JOptionPane.showInputDialog("Digite o peso máximo:"));
+                    boolean climatizado = JOptionPane.showConfirmDialog(null, "É climatizado?",
+                            "Climatizado", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                    system.getDrones().add(new DroneCargaViva(codigo, custoFixo, autonomia, pesoMaximo, climatizado));
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Drone cadastrado com sucesso!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao cadastrar drone: " + e.getMessage());
+        }
+    }
+
+    public void cadastrarTransporteInterativo() {
+        String[] opcoes = {"Pessoal", "Carga Inanimada", "Carga Viva"};
+        String tipo = (String) JOptionPane.showInputDialog(null, "Selecione o tipo de transporte:",
+                "Cadastrar Transporte", JOptionPane.QUESTION_MESSAGE, null, opcoes, opcoes[0]);
+
+        if (tipo == null) return; // Cancelado
+
+        try {
+            int numero = Integer.parseInt(JOptionPane.showInputDialog("Digite o número do transporte:"));
+            String nomeCliente = JOptionPane.showInputDialog("Digite o nome do cliente:");
+            String descricao = JOptionPane.showInputDialog("Digite a descrição:");
+            double peso = Double.parseDouble(JOptionPane.showInputDialog("Digite o peso:"));
+            double latOrigem = Double.parseDouble(JOptionPane.showInputDialog("Digite a latitude de origem:"));
+            double longOrigem = Double.parseDouble(JOptionPane.showInputDialog("Digite a longitude de origem:"));
+            double latDestino = Double.parseDouble(JOptionPane.showInputDialog("Digite a latitude de destino:"));
+            double longDestino = Double.parseDouble(JOptionPane.showInputDialog("Digite a longitude de destino:"));
+
+            switch (tipo) {
+                case "Pessoal" -> {
+                    int qtdPessoas = Integer.parseInt(JOptionPane.showInputDialog("Digite a quantidade de pessoas:"));
+                    system.getTransportes().add(new TransportePessoal(numero, nomeCliente, descricao, peso, latOrigem,
+                            longOrigem, latDestino, longDestino, qtdPessoas));
+                }
+                case "Carga Inanimada" -> {
+                    boolean cargaPerigosa = JOptionPane.showConfirmDialog(null, "A carga é perigosa?",
+                            "Carga Perigosa", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                    system.getTransportes().add(new TransporteCargaInanimada(numero, nomeCliente, descricao, peso,
+                            latOrigem, longOrigem, latDestino, longDestino, cargaPerigosa));
+                }
+                case "Carga Viva" -> {
+                    double tempMin = Double.parseDouble(JOptionPane.showInputDialog("Digite a temperatura mínima:"));
+                    double tempMax = Double.parseDouble(JOptionPane.showInputDialog("Digite a temperatura máxima:"));
+                    system.getTransportes().add(new TransporteCargaViva(numero, nomeCliente, descricao, peso, latOrigem,
+                            longOrigem, latDestino, longDestino, tempMin, tempMax));
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Transporte cadastrado com sucesso!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao cadastrar transporte: " + e.getMessage());
         }
     }
 

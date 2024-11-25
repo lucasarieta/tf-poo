@@ -375,29 +375,39 @@ public class ACMEAirDrones {
     }
 
     public void processarTransportesPendentes() throws Exception {
+
         if (transportes.isEmpty()) {
             System.out.println("Erro: Não há transportes pendentes.");
             return;
         }
 
-        Queue<Transporte> filaRestante = new LinkedList<>(); // Fila temporária para transportes não alocados
+        Queue<Transporte> filaRestante = new LinkedList<>();
 
         while (!transportes.isEmpty()) {
-            Transporte transporte = transportes.poll(); // Remove o próximo transporte da fila
+            Transporte transporte = transportes.poll();
             Optional<Drone> droneDisponivel = encontrarDroneDisponivel(transporte);
 
             if (droneDisponivel.isPresent()) {
+
                 Drone drone = droneDisponivel.get();
-                transporte.setSituacao(TransporteStatus.ALOCADO); // Altera a situação do transporte
+                transporte.setSituacao(TransporteStatus.ALOCADO);
                 System.out.println("Transporte " + transporte.getNumero() + " alocado ao drone " + drone.getCodigo());
+                filaRestante.add(transporte);
             } else {
+
                 System.out.println("Transporte " + transporte.getNumero() + " não pode ser alocado e retornará à fila.");
-                filaRestante.add(transporte); // Adiciona à fila temporária se não for alocado
+                filaRestante.add(transporte);
             }
+
+
         }
 
-        transportes.addAll(filaRestante);
+        while(!filaRestante.isEmpty()) {
+            transportes.add(filaRestante.poll());
+        }
+
     }
+
 
 
 
@@ -544,7 +554,5 @@ public class ACMEAirDrones {
     public void setTransportes(Queue<Transporte> transportes) {
         this.transportes = transportes;
     }
-
-
 
 }
