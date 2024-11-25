@@ -17,4 +17,8 @@ public class DroneCargaInanimada extends DroneCarga {
     public boolean isProtecao() {
         return protecao;
     }
+
+    public double calculaCustoKm(){
+        return protecao ? getCustoFixo() + 10 : getCustoFixo() + 5;
+    }
 }

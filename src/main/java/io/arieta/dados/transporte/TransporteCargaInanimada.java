@@ -20,4 +20,9 @@ public class TransporteCargaInanimada extends Transporte {
     public boolean isCargaPerigosa() {
         return cargaPerigosa;
     }
+
+    @Override
+    public double calculaCusto() {
+        return (getPeso() * 0.5) + (cargaPerigosa ? 500.0 : 0.0);
+    }
 }

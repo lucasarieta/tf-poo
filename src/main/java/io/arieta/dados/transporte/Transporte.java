@@ -30,9 +30,7 @@ public abstract class Transporte{
         this.situacao = TransporteStatus.PENDENTE;
     }
 
-    public double calculaCusto() {
-        return 0;
-    }
+    public abstract double calculaCusto();
 
     public int getNumero(){
         return this.numero;

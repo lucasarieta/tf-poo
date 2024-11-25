@@ -26,4 +26,10 @@ public class TransporteCargaViva extends Transporte {
     public double getTemperaturaMaxima() {
         return temperaturaMaxima;
     }
+
+    @Override
+    public double calculaCusto() {
+        double intervalo = temperaturaMaxima - temperaturaMinima;
+        return (getPeso() * 0.5) + (intervalo > 10.0 ? 1000.0 : 0.0);
+    }
 }

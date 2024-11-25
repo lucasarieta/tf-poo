@@ -16,4 +16,8 @@ public class DronePessoal extends Drone {
     public int getQtdMaxPessoas() {
         return qtdMaxPessoas;
     }
+
+    public double calculaCustoKm() {
+        return getCustoFixo() + (getQtdMaxPessoas() * 2);
+    }
 }
