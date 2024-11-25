@@ -27,8 +27,10 @@ public class JsonHandler<T> {
 
     private ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL); // Exclui campos nulos
+        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         mapper.enable(SerializationFeature.INDENT_OUTPUT); // Formata o JSON
+
+
         return mapper;
     }
 }
