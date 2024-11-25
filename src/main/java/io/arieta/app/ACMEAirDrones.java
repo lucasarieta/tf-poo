@@ -1,13 +1,15 @@
 package io.arieta.app;
 
 import io.arieta.dados.drone.*;
-import io.arieta.ui.UI;
 import io.arieta.dados.transporte.*;
+import io.arieta.ui.MainFrame;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 public class ACMEAirDrones {
@@ -17,7 +19,7 @@ public class ACMEAirDrones {
     private Queue<Transporte> transportes = new LinkedList<>();
 
     public void executar() {
-        SwingUtilities.invokeLater(() -> new UI(this));
+        SwingUtilities.invokeLater(() -> new MainFrame(this));
     }
 
     public void cadastrarDrones(File arquivo) {
@@ -66,6 +68,116 @@ public class ACMEAirDrones {
             System.out.println(saida.toString());
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Arquivo não encontrado: " + e.getMessage());
+        }
+    }
+
+    public void salvarDados(String nomeArquivo) throws IOException {
+
+        try (FileWriter droneWriter = new FileWriter(nomeArquivo + "-DRONES.csv")) {
+            droneWriter.write("tipo;codigo;custofixo;autonomia;especifico\n");
+            for (Drone drone : drones) {
+                if (drone instanceof DronePessoal) {
+                    DronePessoal dp = (DronePessoal) drone;
+                    droneWriter.write(String.format("1;%d;%.2f;%.2f;%d\n",
+                            dp.getCodigo(), dp.getCustoFixo(), dp.getAutonomia(), dp.getQtdMaxPessoas()));
+                } else if (drone instanceof DroneCargaInanimada) {
+                    DroneCargaInanimada dci = (DroneCargaInanimada) drone;
+                    droneWriter.write(String.format("2;%d;%.2f;%.2f;%.2f;%b\n",
+                            dci.getCodigo(), dci.getCustoFixo(), dci.getAutonomia(), dci.getPesoMaximo(), dci.isProtecao()));
+                } else if (drone instanceof DroneCargaViva) {
+                    DroneCargaViva dcv = (DroneCargaViva) drone;
+                    droneWriter.write(String.format("3;%d;%.2f;%.2f;%.2f;%b\n",
+                            dcv.getCodigo(), dcv.getCustoFixo(), dcv.getAutonomia(), dcv.getPesoMaximo(), dcv.isClimatizado()));
+                }
+            }
+        }
+
+        // Salvar transportes
+        try (FileWriter transporteWriter = new FileWriter(nomeArquivo + "-TRANSPORTES.csv")) {
+            transporteWriter.write("tipo;numero;nomecliente;descricao;peso;latorigem;longorigem;latdestino;longdestino;especifico\n");
+            for (Transporte transporte : transportes) {
+                if (transporte instanceof TransportePessoal) {
+                    TransportePessoal tp = (TransportePessoal) transporte;
+                    transporteWriter.write(String.format("1;%d;%s;%s;%.2f;%.6f;%.6f;%.6f;%.6f;%d\n",
+                            tp.getNumero(), tp.getNomeCliente(), tp.getDescricao(), tp.getPeso(),
+                            tp.getLatitudeOrigem(), tp.getLongitudeOrigem(), tp.getLatitudeDestino(), tp.getLongitudeDestino(),
+                            tp.getQtdPessoas()));
+                } else if (transporte instanceof TransporteCargaInanimada) {
+                    TransporteCargaInanimada tci = (TransporteCargaInanimada) transporte;
+                    transporteWriter.write(String.format("2;%d;%s;%s;%.2f;%.6f;%.6f;%.6f;%.6f;%b\n",
+                            tci.getNumero(), tci.getNomeCliente(), tci.getDescricao(), tci.getPeso(),
+                            tci.getLatitudeOrigem(), tci.getLongitudeOrigem(), tci.getLatitudeDestino(), tci.getLongitudeDestino(),
+                            tci.isCargaPerigosa()));
+                } else if (transporte instanceof TransporteCargaViva) {
+                    TransporteCargaViva tcv = (TransporteCargaViva) transporte;
+                    transporteWriter.write(String.format("3;%d;%s;%s;%.2f;%.6f;%.6f;%.6f;%.6f;%.2f;%.2f\n",
+                            tcv.getNumero(), tcv.getNomeCliente(), tcv.getDescricao(), tcv.getPeso(),
+                            tcv.getLatitudeOrigem(), tcv.getLongitudeOrigem(), tcv.getLatitudeDestino(), tcv.getLongitudeDestino(),
+                            tcv.getTemperaturaMinima(), tcv.getTemperaturaMaxima()));
+                }
+            }
+        }
+    }
+
+    public void carregarDados(String nomeArquivo) throws Exception {
+        // Carregar drones
+        File dronesFile = new File(nomeArquivo + "-DRONES.csv");
+        if (dronesFile.exists()) {
+            try (Scanner scanner = new Scanner(dronesFile)) {
+                // Ignorar a primeira linha do cabeçalho
+                if (scanner.hasNextLine()) {
+                    scanner.nextLine();
+                }
+                while (scanner.hasNextLine()) {
+                    String linha = scanner.nextLine();
+                    String[] partes = linha.split(";");
+                    int tipo = Integer.parseInt(partes[0]);
+
+                    switch (tipo) {
+                        case 1: // Drone pessoal
+                            cadastrarDronePessoal(partes);
+                            break;
+                        case 2: // Drone carga inanimada
+                            cadastrarDroneCargaInanimada(partes);
+                            break;
+                        case 3: // Drone carga viva
+                            cadastrarDroneCargaViva(partes);
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Tipo de drone inválido: " + tipo);
+                    }
+                }
+            }
+        }
+
+        // Carregar transportes
+        File transportesFile = new File(nomeArquivo + "-TRANSPORTES.csv");
+        if (transportesFile.exists()) {
+            try (Scanner scanner = new Scanner(transportesFile)) {
+                // Ignorar a primeira linha do cabeçalho
+                if (scanner.hasNextLine()) {
+                    scanner.nextLine();
+                }
+                while (scanner.hasNextLine()) {
+                    String linha = scanner.nextLine();
+                    String[] partes = linha.split(";");
+                    int tipo = Integer.parseInt(partes[0]);
+
+                    switch (tipo) {
+                        case 1: // Transporte pessoal
+                            cadastraTransportePessoas(partes);
+                            break;
+                        case 2: // Transporte carga inanimada
+                            cadastraTransporteCargaInanimada(partes);
+                            break;
+                        case 3: // Transporte carga viva
+                            cadastraTransporteCargaViva(partes);
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Tipo de transporte inválido: " + tipo);
+                    }
+                }
+            }
         }
     }
 
@@ -318,6 +430,39 @@ public class ACMEAirDrones {
                 * Math.sin(dLon / 2) * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
+    }
+
+    public void alterarSituacaoTransporte(int numero, TransporteStatus novaSituacao) throws Exception {
+        Transporte transporte = transportes.stream()
+                .filter(t -> t.getNumero() == numero)
+                .findFirst()
+                .orElseThrow(() -> new Exception("Transporte com o número " + numero + " não encontrado."));
+
+        if (transporte.getSituacao() == TransporteStatus.TERMINADO || transporte.getSituacao() == TransporteStatus.CANCELADO) {
+            throw new Exception("Não é possível alterar a situação de um transporte TERMINADO ou CANCELADO.");
+        }
+
+        transporte.setSituacao(novaSituacao);
+    }
+
+    public String gerarRelatorioGeral() {
+        StringBuilder relatorio = new StringBuilder();
+
+        relatorio.append("=== Drones Cadastrados ===\n");
+        for (Drone drone : drones) {
+            relatorio.append(drone).append("\n");
+        }
+
+        relatorio.append("\n=== Transportes Cadastrados ===\n");
+        for (Transporte transporte : transportes) {
+            relatorio.append(transporte).append("\n");
+        }
+
+        return relatorio.toString();
+    }
+
+    public List<Transporte> getTodosTransportes() {
+        return new ArrayList<>(transportes);
     }
 
 
