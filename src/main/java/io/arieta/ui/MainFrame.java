@@ -126,16 +126,34 @@ public class MainFrame extends JFrame {
     }
 
     private void mostrarTransportes() {
+        StringBuilder relatorio = new StringBuilder();
         try {
             List<Transporte> transportes = system.getTodosTransportes();
-            StringBuilder sb = new StringBuilder();
-            for (Transporte t : transportes) {
-                sb.append(t.toString()).append("\n");
+
+            relatorio.append("\n=== Transportes Cadastrados ===\n");
+            for (Transporte transporte : transportes) {
+                switch (transporte) {
+                    case TransportePessoal tp ->
+                            relatorio.append(String.format("Transporte Pessoal - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Pessoas: %d, Situacao: %s\n",
+                                    tp.getNumero(), tp.getNomeCliente(), tp.getDescricao(), tp.getPeso(), tp.getLatitudeOrigem(), tp.getLongitudeOrigem(),
+                                    tp.getLatitudeDestino(), tp.getLongitudeDestino(), tp.getQtdPessoas(), tp.getSituacao()));
+                    case TransporteCargaInanimada tci ->
+                            relatorio.append(String.format("Transporte Carga Inanimada - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Carga Perigosa: %b, Situacao: %s\n",
+                                    tci.getNumero(), tci.getNomeCliente(), tci.getDescricao(), tci.getPeso(), tci.getLatitudeOrigem(), tci.getLongitudeOrigem(),
+                                    tci.getLatitudeDestino(), tci.getLongitudeDestino(), tci.isCargaPerigosa(), tci.getSituacao()));
+                    case TransporteCargaViva tcv ->
+                            relatorio.append(String.format("Transporte Carga Viva - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Temperatura Mínima: %.2f, Temperatura Máxima: %.2f, Situacao: %s\n",
+                                    tcv.getNumero(), tcv.getNomeCliente(), tcv.getDescricao(), tcv.getPeso(), tcv.getLatitudeOrigem(), tcv.getLongitudeOrigem(),
+                                    tcv.getLatitudeDestino(), tcv.getLongitudeDestino(), tcv.getTemperaturaMinima(), tcv.getTemperaturaMaxima(), tcv.getSituacao()));
+                    default ->
+                            relatorio.append("Tipo de transporte não identificado\n");
+                }
             }
-            outputArea.setText(sb.toString());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao listar transportes: " + e.getMessage());
         }
+        String relatString = String.valueOf(relatorio);
+        outputArea.setText(relatString);
     }
 
     private void alterarSituacaoTransporte() {

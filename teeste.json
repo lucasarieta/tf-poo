@@ -1,0 +1,93 @@
+[ "io.arieta.app.ACMEAirDrones", {
+  "drones" : [ "java.util.ArrayList", [ {
+    "type" : "CARGA_INANIMADA",
+    "codigo" : 22,
+    "custoFixo" : 20.0,
+    "autonomia" : 200.0,
+    "pesoMaximo" : 200.0,
+    "protecao" : true
+  }, {
+    "type" : "PESSOAL",
+    "codigo" : 11,
+    "custoFixo" : 10.0,
+    "autonomia" : 100.0,
+    "qtdMaxPessoas" : 5
+  }, {
+    "type" : "CARGA_VIVA",
+    "codigo" : 33,
+    "custoFixo" : 30.0,
+    "autonomia" : 400.0,
+    "pesoMaximo" : 300.0,
+    "climatizado" : true
+  } ] ],
+  "transportes" : [ "java.util.LinkedList", [ [ "io.arieta.dados.transporte.TransporteCargaViva", {
+    "numero" : 222,
+    "nomeCliente" : "Joana Santos",
+    "descricao" : "Pandas",
+    "peso" : 250.3,
+    "latitudeOrigem" : -30.027593,
+    "longitudeOrigem" : -51.227884,
+    "latitudeDestino" : -27.597393,
+    "longitudeDestino" : -48.55289,
+    "situacao" : "PENDENTE",
+    "temperaturaMinima" : 20.1,
+    "temperaturaMaxima" : 30.9
+  } ], [ "io.arieta.dados.transporte.TransportePessoal", {
+    "numero" : 111,
+    "nomeCliente" : "Maria da Silva",
+    "descricao" : "Trabalho",
+    "peso" : 140.1,
+    "latitudeOrigem" : -30.02719,
+    "longitudeOrigem" : -51.161572,
+    "latitudeDestino" : -30.061458,
+    "longitudeDestino" : -51.173695,
+    "situacao" : "PENDENTE",
+    "qtdPessoas" : 2
+  } ], [ "io.arieta.dados.transporte.TransporteCargaInanimada", {
+    "numero" : 333,
+    "nomeCliente" : "Mario da Silva",
+    "descricao" : "Chocolate",
+    "peso" : 150.2,
+    "latitudeOrigem" : -29.378867,
+    "longitudeOrigem" : -50.873611,
+    "latitudeDestino" : -30.02719,
+    "longitudeDestino" : -51.161572,
+    "situacao" : "PENDENTE",
+    "cargaPerigosa" : true
+  } ] ] ],
+  "todosTransportes" : [ "java.util.ArrayList", [ [ "io.arieta.dados.transporte.TransporteCargaViva", {
+    "numero" : 222,
+    "nomeCliente" : "Joana Santos",
+    "descricao" : "Pandas",
+    "peso" : 250.3,
+    "latitudeOrigem" : -30.027593,
+    "longitudeOrigem" : -51.227884,
+    "latitudeDestino" : -27.597393,
+    "longitudeDestino" : -48.55289,
+    "situacao" : "PENDENTE",
+    "temperaturaMinima" : 20.1,
+    "temperaturaMaxima" : 30.9
+  } ], [ "io.arieta.dados.transporte.TransportePessoal", {
+    "numero" : 111,
+    "nomeCliente" : "Maria da Silva",
+    "descricao" : "Trabalho",
+    "peso" : 140.1,
+    "latitudeOrigem" : -30.02719,
+    "longitudeOrigem" : -51.161572,
+    "latitudeDestino" : -30.061458,
+    "longitudeDestino" : -51.173695,
+    "situacao" : "PENDENTE",
+    "qtdPessoas" : 2
+  } ], [ "io.arieta.dados.transporte.TransporteCargaInanimada", {
+    "numero" : 333,
+    "nomeCliente" : "Mario da Silva",
+    "descricao" : "Chocolate",
+    "peso" : 150.2,
+    "latitudeOrigem" : -29.378867,
+    "longitudeOrigem" : -50.873611,
+    "latitudeDestino" : -30.02719,
+    "longitudeDestino" : -51.161572,
+    "situacao" : "PENDENTE",
+    "cargaPerigosa" : true
+  } ] ] ]
+} ]

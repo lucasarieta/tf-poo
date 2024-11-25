@@ -1,8 +1,18 @@
 package io.arieta.dados.transporte;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import io.arieta.dados.drone.Drone;
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TransportePessoal.class, name = "PESSOAL"),
+        @JsonSubTypes.Type(value = TransporteCargaInanimada.class, name = "CARGA_INANIMADA"),
+        @JsonSubTypes.Type(value = TransporteCargaViva.class, name = "CARGA_VIVA")
+})
 
 public abstract class Transporte{
     private int numero;

@@ -374,37 +374,32 @@ public class ACMEAirDrones {
         transportes.add(t);
     }
 
-    public void processarTransportesPendentes() {
+    public void processarTransportesPendentes() throws Exception {
         if (transportes.isEmpty()) {
             System.out.println("Erro: Não há transportes pendentes.");
             return;
         }
-    
-        Queue<Transporte> filaRestante = new LinkedList<>();
-    
+
+        Queue<Transporte> filaRestante = new LinkedList<>(); // Fila temporária para transportes não alocados
+
         while (!transportes.isEmpty()) {
-            Transporte transporte = transportes.poll();
+            Transporte transporte = transportes.poll(); // Remove o próximo transporte da fila
             Optional<Drone> droneDisponivel = encontrarDroneDisponivel(transporte);
-    
+
             if (droneDisponivel.isPresent()) {
                 Drone drone = droneDisponivel.get();
-                try{
-                transporte.setSituacao(TransporteStatus.ALOCADO);
-                }catch(Exception e){
-                    System.out.println(e.getMessage());
-                }
+                transporte.setSituacao(TransporteStatus.ALOCADO); // Altera a situação do transporte
                 System.out.println("Transporte " + transporte.getNumero() + " alocado ao drone " + drone.getCodigo());
-
             } else {
                 System.out.println("Transporte " + transporte.getNumero() + " não pode ser alocado e retornará à fila.");
-                filaRestante.add(transporte);
+                filaRestante.add(transporte); // Adiciona à fila temporária se não for alocado
             }
         }
-    
-        
+
         transportes.addAll(filaRestante);
     }
-    
+
+
 
     private Optional<Drone> encontrarDroneDisponivel(Transporte transporte) {
         for (Drone drone : drones) {
@@ -505,17 +500,17 @@ public class ACMEAirDrones {
         for (Transporte transporte : transportes) {
             switch (transporte) {
                 case TransportePessoal tp ->
-                        relatorio.append(String.format("Transporte Pessoal - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Pessoas: %d\n",
+                        relatorio.append(String.format("Transporte Pessoal - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Pessoas: %d, Situacao: %s\n",
                                 tp.getNumero(), tp.getNomeCliente(), tp.getDescricao(), tp.getPeso(), tp.getLatitudeOrigem(), tp.getLongitudeOrigem(),
-                                tp.getLatitudeDestino(), tp.getLongitudeDestino(), tp.getQtdPessoas()));
+                                tp.getLatitudeDestino(), tp.getLongitudeDestino(), tp.getQtdPessoas(), tp.getSituacao()));
                 case TransporteCargaInanimada tci ->
-                        relatorio.append(String.format("Transporte Carga Inanimada - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Carga Perigosa: %b\n",
+                        relatorio.append(String.format("Transporte Carga Inanimada - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Carga Perigosa: %b, Situacao: %s\n",
                                 tci.getNumero(), tci.getNomeCliente(), tci.getDescricao(), tci.getPeso(), tci.getLatitudeOrigem(), tci.getLongitudeOrigem(),
-                                tci.getLatitudeDestino(), tci.getLongitudeDestino(), tci.isCargaPerigosa()));
+                                tci.getLatitudeDestino(), tci.getLongitudeDestino(), tci.isCargaPerigosa(), tci.getSituacao()));
                 case TransporteCargaViva tcv ->
-                        relatorio.append(String.format("Transporte Carga Viva - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Temperatura Mínima: %.2f, Temperatura Máxima: %.2f\n",
+                        relatorio.append(String.format("Transporte Carga Viva - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Temperatura Mínima: %.2f, Temperatura Máxima: %.2f, Situacao: %s\n",
                                 tcv.getNumero(), tcv.getNomeCliente(), tcv.getDescricao(), tcv.getPeso(), tcv.getLatitudeOrigem(), tcv.getLongitudeOrigem(),
-                                tcv.getLatitudeDestino(), tcv.getLongitudeDestino(), tcv.getTemperaturaMinima(), tcv.getTemperaturaMaxima()));
+                                tcv.getLatitudeDestino(), tcv.getLongitudeDestino(), tcv.getTemperaturaMinima(), tcv.getTemperaturaMaxima(), tcv.getSituacao()));
                 default ->
                         relatorio.append("Tipo de transporte não identificado\n");
             }

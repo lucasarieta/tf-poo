@@ -2,6 +2,8 @@ package io.arieta.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,13 +16,19 @@ public class JsonHandler<T> {
     }
 
     public void writeJson(String filePath, T object) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL); // Exclui campos nulos
+        ObjectMapper mapper = getMapper();
         mapper.writerWithDefaultPrettyPrinter().writeValue(new File(filePath), object);
     }
 
     public T readJson(String filePath) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = getMapper();
         return mapper.readValue(new File(filePath), type);
+    }
+
+    private ObjectMapper getMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL); // Exclui campos nulos
+        mapper.enable(SerializationFeature.INDENT_OUTPUT); // Formata o JSON
+        return mapper;
     }
 }
