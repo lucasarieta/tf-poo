@@ -14,4 +14,7 @@ public class DroneCargaInanimada extends DroneCarga {
         this.protecao = protecao;
     }
 
+    public boolean isProtecao() {
+        return protecao;
+    }
 }
