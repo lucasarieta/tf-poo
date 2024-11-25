@@ -23,4 +23,9 @@ public class TransportePessoal extends Transporte {
     public int getQtdPessoas() {
         return qtdPessoas;
     }
+
+    @Override
+    public double calculaCusto() {
+        return (getPeso() * 0.5) + (qtdPessoas * 10.0);
+    }
 }

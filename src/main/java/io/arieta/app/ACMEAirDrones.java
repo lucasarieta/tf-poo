@@ -3,6 +3,8 @@ package io.arieta.app;
 import io.arieta.dados.drone.*;
 import io.arieta.dados.transporte.*;
 import io.arieta.ui.MainFrame;
+import io.arieta.util.JsonHandler;
+import io.arieta.util.XmlHandler;
 
 import javax.swing.*;
 import java.io.File;
@@ -20,6 +22,29 @@ public class ACMEAirDrones {
 
     public void executar() {
         SwingUtilities.invokeLater(() -> new MainFrame(this));
+    }
+
+    public void carregarDadosJSON(String filePath) throws IOException {
+        JsonHandler<ACMEAirDrones> jsonHandler = new JsonHandler<>(ACMEAirDrones.class);
+        ACMEAirDrones dados = jsonHandler.readJson(filePath);
+        this.drones = dados.drones;
+        this.transportes = dados.transportes;
+        System.out.println("Dados carregados do JSON com sucesso!");
+    }
+
+    public void salvarDadosJSON(String filePath) throws IOException {
+        JsonHandler<ACMEAirDrones> jsonHandler = new JsonHandler<>(ACMEAirDrones.class);
+        jsonHandler.writeJson(filePath, this);
+        System.out.println("Dados salvos em JSON no arquivo: " + filePath);
+    }
+
+
+    public void carregarDadosXML(String filePath) throws IOException {
+        XmlHandler<ACMEAirDrones> xmlHandler = new XmlHandler<>(ACMEAirDrones.class);
+        ACMEAirDrones dados = xmlHandler.readXml(filePath);
+        this.drones = dados.drones;
+        this.transportes = dados.transportes;
+        System.out.println("Dados carregados do XML com sucesso!");
     }
 
     public void cadastrarDrones(File arquivo) {
@@ -181,7 +206,7 @@ public class ACMEAirDrones {
         }
     }
 
-    private void cadastrarDronePessoal(String[] partes) throws Exception {
+    void cadastrarDronePessoal(String[] partes) throws Exception {
         int codigo = Integer.parseInt(partes[1]);
         double custoFixo = Double.parseDouble(partes[2]);
         double autonomia = Double.parseDouble(partes[3]);
@@ -195,7 +220,7 @@ public class ACMEAirDrones {
         this.drones.add(drone);
     }
 
-    private void cadastrarDroneCargaInanimada(String[] partes) throws Exception{
+    void cadastrarDroneCargaInanimada(String[] partes) throws Exception{
         int codigo = Integer.parseInt(partes[1]);
         double custoFixo = Double.parseDouble(partes[2]);
         double autonomia = Double.parseDouble(partes[3]);
@@ -210,7 +235,7 @@ public class ACMEAirDrones {
         this.drones.add(drone);
     }
 
-    private void cadastrarDroneCargaViva(String[] partes) throws Exception {
+    void cadastrarDroneCargaViva(String[] partes) throws Exception {
         int codigo = Integer.parseInt(partes[1]);
         double custoFixo = Double.parseDouble(partes[2]);
         double autonomia = Double.parseDouble(partes[3]);
@@ -392,44 +417,55 @@ public class ACMEAirDrones {
 
     private boolean isDroneCompativel(Drone drone, Transporte transporte) {
         double distancia = calcularDistancia(
-            transporte.getLatitudeOrigem(),
-            transporte.getLongitudeOrigem(),
-            transporte.getLatitudeDestino(),
-            transporte.getLongitudeDestino()
+                transporte.getLatitudeOrigem(),
+                transporte.getLongitudeOrigem(),
+                transporte.getLatitudeDestino(),
+                transporte.getLongitudeDestino()
         );
-    
+
+        // Log de depuração
+        System.out.println("Verificando compatibilidade:");
+        System.out.println("Drone Código: " + drone.getCodigo() + ", Autonomia: " + drone.getAutonomia() + ", Distância: " + distancia);
+        System.out.println("Transporte Número: " + transporte.getNumero() + ", Peso: " + transporte.getPeso());
+
         if (drone.getAutonomia() < distancia) {
+            System.out.println("Incompatível: Autonomia insuficiente.");
             return false;
         }
 
         switch (drone) {
             case DronePessoal dronePessoal when transporte instanceof TransportePessoal transportePessoal -> {
-                return dronePessoal.getQtdMaxPessoas() >= transportePessoal.getQtdPessoas();
+                boolean compativel = dronePessoal.getQtdMaxPessoas() >= transportePessoal.getQtdPessoas();
+                System.out.println(compativel ? "Compatível: Transporte Pessoal." : "Incompatível: Capacidade de pessoas insuficiente.");
+                return compativel;
             }
-            case DroneCargaInanimada droneCarga when transporte instanceof TransporteCargaInanimada -> {
-                TransporteCargaInanimada transporteCarga = (TransporteCargaInanimada) transporte;
-                return droneCarga.getPesoMaximo() >= transporteCarga.getPeso();
+            case DroneCargaInanimada droneCarga when transporte instanceof TransporteCargaInanimada transporteCarga -> {
+                boolean compativel = droneCarga.getPesoMaximo() >= transporteCarga.getPeso();
+                System.out.println(compativel ? "Compatível: Transporte Carga Inanimada." : "Incompatível: Peso excede limite.");
+                return compativel;
             }
             case DroneCargaViva droneVivo when transporte instanceof TransporteCargaViva transporteVivo -> {
-                return droneVivo.getPesoMaximo() >= transporteVivo.getPeso();
+                boolean compativel = droneVivo.getPesoMaximo() >= transporteVivo.getPeso();
+                System.out.println(compativel ? "Compatível: Transporte Carga Viva." : "Incompatível: Peso excede limite.");
+                return compativel;
             }
             default -> {
+                System.out.println("Incompatível: Tipo de drone não suportado.");
+                return false;
             }
         }
-
-
-        return false;
     }
 
+
     private double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
-        final int R = 6371;
+        final int R = 6371; // Raio da Terra em quilômetros
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(dLon / 2) * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
+        return R * c; // Distância em quilômetros
     }
 
     public void alterarSituacaoTransporte(int numero, TransporteStatus novaSituacao) throws Exception {
@@ -450,12 +486,39 @@ public class ACMEAirDrones {
 
         relatorio.append("=== Drones Cadastrados ===\n");
         for (Drone drone : drones) {
-            relatorio.append(drone).append("\n");
+            switch (drone) {
+                case DronePessoal dp ->
+                        relatorio.append(String.format("Drone Pessoal - Código: %d, Custo Fixo: %.2f, Autonomia: %.2f, Capacidade Máxima de Pessoas: %d\n",
+                                dp.getCodigo(), dp.getCustoFixo(), dp.getAutonomia(), dp.getQtdMaxPessoas()));
+                case DroneCargaInanimada dci ->
+                        relatorio.append(String.format("Drone Carga Inanimada - Código: %d, Custo Fixo: %.2f, Autonomia: %.2f, Peso Máximo: %.2f, Proteção: %b\n",
+                                dci.getCodigo(), dci.getCustoFixo(), dci.getAutonomia(), dci.getPesoMaximo(), dci.isProtecao()));
+                case DroneCargaViva dcv ->
+                        relatorio.append(String.format("Drone Carga Viva - Código: %d, Custo Fixo: %.2f, Autonomia: %.2f, Peso Máximo: %.2f, Climatizado: %b\n",
+                                dcv.getCodigo(), dcv.getCustoFixo(), dcv.getAutonomia(), dcv.getPesoMaximo(), dcv.isClimatizado()));
+                default ->
+                        relatorio.append("Tipo de drone não identificado\n");
+            }
         }
 
         relatorio.append("\n=== Transportes Cadastrados ===\n");
         for (Transporte transporte : transportes) {
-            relatorio.append(transporte).append("\n");
+            switch (transporte) {
+                case TransportePessoal tp ->
+                        relatorio.append(String.format("Transporte Pessoal - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Pessoas: %d\n",
+                                tp.getNumero(), tp.getNomeCliente(), tp.getDescricao(), tp.getPeso(), tp.getLatitudeOrigem(), tp.getLongitudeOrigem(),
+                                tp.getLatitudeDestino(), tp.getLongitudeDestino(), tp.getQtdPessoas()));
+                case TransporteCargaInanimada tci ->
+                        relatorio.append(String.format("Transporte Carga Inanimada - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Carga Perigosa: %b\n",
+                                tci.getNumero(), tci.getNomeCliente(), tci.getDescricao(), tci.getPeso(), tci.getLatitudeOrigem(), tci.getLongitudeOrigem(),
+                                tci.getLatitudeDestino(), tci.getLongitudeDestino(), tci.isCargaPerigosa()));
+                case TransporteCargaViva tcv ->
+                        relatorio.append(String.format("Transporte Carga Viva - Número: %d, Cliente: %s, Descrição: %s, Peso: %.2f, Origem: (%.6f, %.6f), Destino: (%.6f, %.6f), Temperatura Mínima: %.2f, Temperatura Máxima: %.2f\n",
+                                tcv.getNumero(), tcv.getNomeCliente(), tcv.getDescricao(), tcv.getPeso(), tcv.getLatitudeOrigem(), tcv.getLongitudeOrigem(),
+                                tcv.getLatitudeDestino(), tcv.getLongitudeDestino(), tcv.getTemperaturaMinima(), tcv.getTemperaturaMaxima()));
+                default ->
+                        relatorio.append("Tipo de transporte não identificado\n");
+            }
         }
 
         return relatorio.toString();
@@ -463,6 +526,28 @@ public class ACMEAirDrones {
 
     public List<Transporte> getTodosTransportes() {
         return new ArrayList<>(transportes);
+    }
+
+    private void validarTransporteUnico(int numero) throws Exception {
+        if (transportes.stream().anyMatch(t -> t.getNumero() == numero)) {
+            throw new Exception("Erro: Número do transporte repetido.");
+        }
+    }
+
+    public ArrayList<Drone> getDrones() {
+        return drones;
+    }
+
+    public void setDrones(ArrayList<Drone> drones) {
+        this.drones = drones;
+    }
+
+    public Queue<Transporte> getTransportes() {
+        return transportes;
+    }
+
+    public void setTransportes(Queue<Transporte> transportes) {
+        this.transportes = transportes;
     }
 
 

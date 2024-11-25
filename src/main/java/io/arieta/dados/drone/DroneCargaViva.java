@@ -18,4 +18,8 @@ public class DroneCargaViva extends DroneCarga {
     public boolean isClimatizado() {
         return climatizado;
     }
+
+    public double calculaCustoKm(){
+        return climatizado ? getCustoFixo() + 20 : getCustoFixo() + 10;
+    }
 }
