@@ -12,4 +12,8 @@ public class DronePessoal extends Drone {
         super(codigo, custoFixo, autonomia);
         this.qtdMaxPessoas = qtdMaxPessoas;
     }
+
+    public int getQtdMaxPessoas() {
+        return qtdMaxPessoas;
+    }
 }

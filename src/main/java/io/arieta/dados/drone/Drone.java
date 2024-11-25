@@ -16,4 +16,12 @@ public abstract class Drone {
     public int getCodigo() {
         return this.codigo;
     }
+
+    public double getCustoFixo() {
+        return custoFixo;
+    }
+
+    public double getAutonomia() {
+        return autonomia;
+    }
 }

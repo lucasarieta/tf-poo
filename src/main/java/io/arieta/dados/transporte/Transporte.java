@@ -2,6 +2,8 @@ package io.arieta.dados.transporte;
 
 import java.util.*;
 
+import io.arieta.dados.drone.Drone;
+
 public abstract class Transporte{
     private int numero;
     private String nomeCliente;
@@ -25,6 +27,7 @@ public abstract class Transporte{
         this.longitudeOrigem = longOrigem;
         this.latitudeDestino = latDestino;
         this.longitudeDestino = longDestino;
+        this.situacao = TransporteStatus.PENDENTE;
     }
 
     public double calculaCusto() {
@@ -35,6 +38,43 @@ public abstract class Transporte{
         return this.numero;
     }
 
+    public void setSituacao(TransporteStatus novaSituacao) throws Exception {
+        
+        if (this.situacao == TransporteStatus.TERMINADO || this.situacao == TransporteStatus.CANCELADO) {
+            throw new Exception("Erro: Não é possível alterar a situação de um transporte TERMINADO ou CANCELADO.");
+        }
+        this.situacao = novaSituacao;
+    }
     
+    public TransporteStatus getSituacao(){
+        return this.situacao;
+    }
 
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public double getLongitudeOrigem() {
+        return longitudeOrigem;
+    }
+
+    public double getPeso() {
+        return peso;
+    }
+
+    public double getLatitudeOrigem() {
+        return latitudeOrigem;
+    }
+
+    public double getLatitudeDestino() {
+        return latitudeDestino;
+    }
+
+    public double getLongitudeDestino() {
+        return longitudeDestino;
+    }
 }

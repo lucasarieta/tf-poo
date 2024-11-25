@@ -19,4 +19,8 @@ public class TransportePessoal extends Transporte {
         );
         this.qtdPessoas = qtdPessoas;
     }
+
+    public int getQtdPessoas() {
+        return qtdPessoas;
+    }
 }

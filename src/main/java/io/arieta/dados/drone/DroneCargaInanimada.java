@@ -13,4 +13,5 @@ public class DroneCargaInanimada extends DroneCarga {
         super(codigo, custoFixo, autonomia, pesoMaximo);
         this.protecao = protecao;
     }
+
 }
