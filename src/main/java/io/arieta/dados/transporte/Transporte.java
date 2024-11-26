@@ -23,6 +23,38 @@ public abstract class Transporte{
     private double latitudeOrigem;
     private double longitudeOrigem;
 
+    public void setNumero(int numero) {
+        this.numero = numero;
+    }
+
+    public void setLongitudeDestino(double longitudeDestino) {
+        this.longitudeDestino = longitudeDestino;
+    }
+
+    public void setLatitudeDestino(double latitudeDestino) {
+        this.latitudeDestino = latitudeDestino;
+    }
+
+    public void setLongitudeOrigem(double longitudeOrigem) {
+        this.longitudeOrigem = longitudeOrigem;
+    }
+
+    public void setLatitudeOrigem(double latitudeOrigem) {
+        this.latitudeOrigem = latitudeOrigem;
+    }
+
+    public void setPeso(double peso) {
+        this.peso = peso;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public void setNomeCliente(String nomeCliente) {
+        this.nomeCliente = nomeCliente;
+    }
+
     private double latitudeDestino;
     private double longitudeDestino;
 

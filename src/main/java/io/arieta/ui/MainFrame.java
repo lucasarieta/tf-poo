@@ -325,6 +325,7 @@ public class MainFrame extends JFrame {
                 }
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "Erro ao carregar dados: " + e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
     }

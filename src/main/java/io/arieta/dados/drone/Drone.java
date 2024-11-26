@@ -19,6 +19,18 @@ public abstract class Drone {
     private double custoFixo;
     private double autonomia;
 
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setAutonomia(double autonomia) {
+        this.autonomia = autonomia;
+    }
+
+    public void setCustoFixo(double custoFixo) {
+        this.custoFixo = custoFixo;
+    }
+
     public Drone(int codigo, double custoFixo, double autonomia) {
         this.codigo = codigo;
         this.custoFixo = custoFixo;

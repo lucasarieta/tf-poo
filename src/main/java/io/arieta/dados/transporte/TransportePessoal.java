@@ -20,6 +20,15 @@ public class TransportePessoal extends Transporte {
         this.qtdPessoas = qtdPessoas;
     }
 
+    public void setQtdPessoas(int qtdPessoas) {
+        this.qtdPessoas = qtdPessoas;
+    }
+
+    public TransportePessoal(){
+        super(0,null,null,0.0,0.0,0.0,0.0,0.0);
+        this.qtdPessoas = 0;
+    }
+
     public int getQtdPessoas() {
         return qtdPessoas;
     }

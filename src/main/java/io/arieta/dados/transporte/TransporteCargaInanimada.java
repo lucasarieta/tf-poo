@@ -17,6 +17,14 @@ public class TransporteCargaInanimada extends Transporte {
         this.cargaPerigosa = cargaPerigosa;
     }
 
+    public void setCargaPerigosa(boolean cargaPerigosa) {
+        this.cargaPerigosa = cargaPerigosa;
+    }
+
+    public TransporteCargaInanimada(){
+        super(0,null,null,0.0,0.0,0.0,0.0,0.0);
+    }
+
     public boolean isCargaPerigosa() {
         return cargaPerigosa;
     }

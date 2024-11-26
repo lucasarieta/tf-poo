@@ -4,6 +4,10 @@ public class TransporteCargaViva extends Transporte {
     private double temperaturaMinima;
     private double temperaturaMaxima;
 
+    public void setTemperaturaMaxima(double temperaturaMaxima) {
+        this.temperaturaMaxima = temperaturaMaxima;
+    }
+
     public TransporteCargaViva(int numero, String nomeCliente, String descricao, double peso, double latOrigem, double longOrigem, double latDestino, double longDestino, double temperaturaMinima, double temperaturaMaxima){
         super(
         numero, 
@@ -17,6 +21,14 @@ public class TransporteCargaViva extends Transporte {
         );
         this.temperaturaMinima = temperaturaMinima;
         this.temperaturaMaxima = temperaturaMaxima;
+    }
+
+    public void setTemperaturaMinima(double temperaturaMinima) {
+        this.temperaturaMinima = temperaturaMinima;
+    }
+
+    public TransporteCargaViva(){
+        super(0,null,null,0.0,0.0,0.0,0.0,0.0);
     }
 
     public double getTemperaturaMinima() {

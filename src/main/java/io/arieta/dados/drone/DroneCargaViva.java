@@ -15,6 +15,14 @@ public class DroneCargaViva extends DroneCarga {
         this.climatizado = climatizado;
     }
 
+    public void setClimatizado(boolean climatizado) {
+        this.climatizado = climatizado;
+    }
+
+    public DroneCargaViva(){
+        super(0,0.0,0,0.0);
+    }
+
     public boolean isClimatizado() {
         return climatizado;
     }
