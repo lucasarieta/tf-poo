@@ -12,6 +12,7 @@ public class DroneCargaInanimada extends DroneCarga {
         this.protecao = false;
     }
 
+
     // Construtor anotado para desserialização
     @JsonCreator
     public DroneCargaInanimada(
@@ -36,4 +37,5 @@ public class DroneCargaInanimada extends DroneCarga {
     public double calculaCustoKm() {
         return protecao ? getCustoFixo() + 10 : getCustoFixo() + 5;
     }
+
 }

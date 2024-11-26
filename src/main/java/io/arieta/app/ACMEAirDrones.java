@@ -1,5 +1,7 @@
 package io.arieta.app;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.arieta.dados.drone.*;
 import io.arieta.dados.transporte.*;
 import io.arieta.ui.MainFrame;
@@ -529,10 +531,6 @@ public class ACMEAirDrones {
         return relatorio.toString();
     }
 
-    public List<Transporte> getTodosTransportes() {
-        return new ArrayList<>(transportes);
-    }
-
     private void validarTransporteUnico(int numero) throws Exception {
         if (transportes.stream().anyMatch(t -> t.getNumero() == numero)) {
             throw new Exception("Erro: Número do transporte repetido.");
@@ -543,8 +541,19 @@ public class ACMEAirDrones {
         return drones;
     }
 
-    public void setDrones(ArrayList<Drone> drones) {
-        this.drones = drones;
+    @JsonIgnore
+    public List<Transporte> getTodosTransportes() {
+        return new ArrayList<>(transportes);
+    }
+
+    @JsonProperty("todosTransportes")
+    private List<Transporte> getTransportesList() {
+        return new ArrayList<>(transportes);
+    }
+
+    @JsonProperty("todosTransportes")
+    private void setTransportesList(List<Transporte> transportes) {
+        this.transportes = new LinkedList<>(transportes);
     }
 
     public Queue<Transporte> getTransportes() {
